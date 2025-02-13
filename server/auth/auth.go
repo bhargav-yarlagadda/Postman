@@ -53,6 +53,8 @@ func SignUp(c *fiber.Ctx) error {
 	// Return success response
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "User created successfully"})
 }
+
+
 func SignIn(c *fiber.Ctx) error {
 	var loginData models.SignIn
 
@@ -83,6 +85,38 @@ func SignIn(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Failed to generate token"})
 	}
 
-	// Return token
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"token": token})
+	// Store JWT in HTTP-only, Secure Cookie
+	c.Cookie(&fiber.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(24 * time.Hour), // Cookie expires in 24 hours
+		HTTPOnly: true,  // JavaScript cannot access it
+		Secure:   false,  // Only works on HTTPS
+		SameSite: "Lax",
+	})
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Login successful"})
 }
+
+
+func GetSession(c *fiber.Ctx) error {
+	// Get JWT from Cookie
+	tokenString := c.Cookies("jwt")
+	if tokenString == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Not authenticated"})
+	}
+
+	// Verify Token
+	claims, err := utils.ParseToken(tokenString)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Invalid token"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "User authenticated",
+		"user":    claims["username"], // Return username from token
+		
+	})
+}
+
+
