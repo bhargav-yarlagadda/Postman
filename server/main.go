@@ -40,6 +40,8 @@ func main() {
 	app.Post("/auth/sign-in", auth.SignIn)
 	app.Post("/auth/sign-up", auth.SignUp)
 	app.Get("/auth/get-session", auth.GetSession)
+	app.Post("/auth/logout", auth.Logout)
+
 
 	// Start the server
 	if err := app.Listen(":8080"); err != nil {

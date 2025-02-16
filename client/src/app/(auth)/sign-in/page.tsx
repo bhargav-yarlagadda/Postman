@@ -1,14 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { UserContext } from "@/wrappers/UserWrapper";
 const SignInPage = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
+  const context = useContext(UserContext)
+  if(!context){
+    throw Error("Context Undefied.")
+  }
+  const {setUser}=context 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -28,6 +33,7 @@ const SignInPage = () => {
       const data = await res.json();
       console.log(3)
       if (res.ok) {
+        setUser(username)
         router.push("/"); // Redirect after login
       } else {
         setMessage(data.message || "Invalid credentials");

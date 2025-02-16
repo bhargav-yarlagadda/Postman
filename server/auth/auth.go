@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"postman-backend/database"
 	"postman-backend/models"
 	"postman-backend/utils"
@@ -120,3 +121,22 @@ func GetSession(c *fiber.Ctx) error {
 }
 
 
+func Logout(c *fiber.Ctx) error {
+    fmt.Println("Before clearing: ", c.Cookies("jwt")) // Debugging
+
+    c.Cookie(&fiber.Cookie{
+        Name:     "jwt",
+        Value:    "",
+        Expires:  time.Now().Add(-time.Hour), // Expire immediately
+        Path:     "/",  // Make sure path is the same as the original
+        HTTPOnly: true, // Ensure it matches how it was set
+        Secure:   true, // Ensure it matches how it was set
+        SameSite: "Lax",
+    })
+
+    fmt.Println("After clearing: ", c.Cookies("jwt")) // Debugging
+
+    return c.Status(200).JSON(fiber.Map{
+        "message": "Logged out successfully",
+    })
+}
