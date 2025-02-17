@@ -1,15 +1,26 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { UserContext } from "@/wrappers/UserWrapper";
 const SignUpPage = () => {
-    const router = useRouter()
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
+  const context = useContext(UserContext)
+  if(!context){
+    throw Error("Context not defined")
+  }
+  const {user}=context
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user, router]);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -25,13 +36,12 @@ const SignUpPage = () => {
       const data = await res.json();
       if (res.ok) {
         setMessage("Account created successfully! Please sign in.");
-        router.push("/sign-in")
+        router.push("/sign-in");
       } else {
         setMessage(data.message || "Sign-up failed");
       }
-    } catch (error:any) {
+    } catch (error: any) {
       setMessage("Something went wrong. Try again later.");
-     
     } finally {
       setLoading(false);
     }

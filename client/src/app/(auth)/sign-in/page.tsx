@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserContext } from "@/wrappers/UserWrapper";
@@ -13,7 +13,12 @@ const SignInPage = () => {
   if(!context){
     throw Error("Context Undefied.")
   }
-  const {setUser}=context 
+  const {setUser,user}=context 
+  useEffect(()=>{
+    if(user){
+      router.push('/')
+    }
+  },[user])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
