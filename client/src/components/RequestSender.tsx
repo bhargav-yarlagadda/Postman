@@ -64,7 +64,7 @@ const RequestSender: React.FC = () => {
   };
 
   return (
-    <div style={{ scrollbarWidth: 'none' }} className="flex flex-col p-4 max-h-[400px] overflow-y-scroll bg-gray-900 text-white">
+    <div style={{ scrollbarWidth: 'none' }} className="flex flex-col p-4 max-h-[400px] overflow-y-scroll bg-[#1e1e1e] text-white">
       <div className="flex items-center gap-2 bg-gray-800 p-3 rounded-lg">
         <select className="px-3 py-2 bg-gray-700 rounded text-white">
           <option>GET</option>

@@ -20,7 +20,7 @@ const AddTab = () => {
     throw new Error("AddTab must be used within a RequestProvider");
   }
 
-  const {requests, setRequests, currentRequest, setCurrentRequest} = requestContext;
+  const {requests, setRequests, setCurrentRequest} = requestContext;
 
   // Function to add a new request
   const addNewRequest = () => {
@@ -58,7 +58,7 @@ const AddTab = () => {
   };
 
   return (
-    <div className="flex items-center w-full bg-gray-900 py-2 px-3">
+    <div className="flex items-center w-full bg-[#1e1e1e] py-2 px-3">
       {/* Scrollable Tabs */}
       <div className="flex-1 overflow-x-auto flex items-center space-x-3">
         {tabs.map((tab, index) => (

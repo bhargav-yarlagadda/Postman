@@ -8,7 +8,7 @@ const Navbar = () => {
   }
   const { logout, user } = context;
   return (
-    <nav className="flex justify-between items-center p-4 bg-gray-900 text-white shadow-md">
+    <nav className="flex justify-between items-center p-4 bg-[#1e1e1e] text-white shadow-md">
       <h1 className="text-xl font-semibold">Postman</h1>
       <div className="flex items-center gap-4">
         <span className="text-lg font-medium">Hello, {user}</span>

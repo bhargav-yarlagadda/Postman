@@ -7,13 +7,13 @@ import { Loader } from "@/components/Loader";
 import Navbar from "@/components/Navbar";
 import AddTab from "@/components/AddTab";
 import RequestSender from "@/components/RequestSender";
-
+import Response from "@/components/Response";
 const Page = () => {
   const router = useRouter();
   const context = useContext(UserContext);
   const user = context?.user;
   const loading = context?.loading;
-  const logout = context?.logout;
+
 
   useEffect(() => {
     if (loading) return;
@@ -27,6 +27,7 @@ const Page = () => {
       <Navbar/>
       <AddTab/>
       <RequestSender/>
+      <Response/>
     </div>
 
   );
