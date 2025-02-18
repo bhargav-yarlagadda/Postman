@@ -1,4 +1,5 @@
-import React, { useState, ChangeEvent } from 'react';
+import { RequestContext } from '@/wrappers/RequestWrapper';
+import React, { useState, ChangeEvent, useContext, useEffect } from 'react';
 
 interface Param {
   key: string;
@@ -12,12 +13,27 @@ interface Header {
 }
 
 const RequestSender: React.FC = () => {
+  const context = useContext(RequestContext);
+  if (!context) {
+    throw Error("error in initializing request context");
+  }
+  const { currentRequest } = context;
+
   const [activeTab, setActiveTab] = useState<'params' | 'headers' | 'body'>('params');
-  const [params, setParams] = useState<Param[]>([{ key: '', value: '', description: '' }]);
-  const [headers, setHeaders] = useState<Header[]>([{ key: '', value: '' }]);
-  const [body, setBody] = useState<string>('');
+  
+  // Initialize state with currentRequest values if they exist
+  const [params, setParams] = useState<Param[]>(currentRequest.params || [{ key: '', value: '', description: '' }]);
+  const [headers, setHeaders] = useState<Header[]>(currentRequest.headers || [{ key: '', value: '' }]);
+  const [body, setBody] = useState<string>(currentRequest.body || '');
 
   const tabs: string[] = ['Params', 'Headers', 'Body'];
+
+  useEffect(() => {
+    // Set the state to the current request when the component mounts
+    setParams(currentRequest.params || [{ key: '', value: '', description: '' }]);
+    setHeaders(currentRequest.headers || [{ key: '', value: '' }]);
+    setBody(currentRequest.body || '');
+  }, [currentRequest]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -48,7 +64,7 @@ const RequestSender: React.FC = () => {
   };
 
   return (
-    <div style={{scrollbarWidth:'none'}} className="flex flex-col p-4 max-h-[400px] overflow-y-scroll bg-gray-900 text-white">
+    <div style={{ scrollbarWidth: 'none' }} className="flex flex-col p-4 max-h-[400px] overflow-y-scroll bg-gray-900 text-white">
       <div className="flex items-center gap-2 bg-gray-800 p-3 rounded-lg">
         <select className="px-3 py-2 bg-gray-700 rounded text-white">
           <option>GET</option>
@@ -70,9 +86,7 @@ const RequestSender: React.FC = () => {
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`py-2 text-lg ${
-              activeTab === tab.toLowerCase() ? 'border-b-2 border-orange-500 text-orange-500' : 'text-gray-400'
-            }`}
+            className={`py-2 text-lg ${activeTab === tab.toLowerCase() ? 'border-b-2 border-orange-500 text-orange-500' : 'text-gray-400'}`}
             onClick={() => setActiveTab(tab.toLowerCase() as 'params' | 'headers' | 'body')}
           >
             {tab}
@@ -80,7 +94,7 @@ const RequestSender: React.FC = () => {
         ))}
       </div>
 
-      <div className="mt-4 bg-gray-800 p-4 rounded-lg">
+      <div className="mt-4 bg-gray-800 p-4 h-[350px] rounded-lg">
         {activeTab === 'params' && (
           <div>
             {params.map((param, index) => (
@@ -152,9 +166,9 @@ const RequestSender: React.FC = () => {
         )}
 
         {activeTab === 'body' && (
-          <textarea 
+          <textarea
             value={body}
-            style={{scrollbarWidth:"none"}}
+            style={{ scrollbarWidth: "none" }}
             onChange={(e) => handleInputChange(e, null, 'body')}
             placeholder="Enter body content"
             rows={7}
