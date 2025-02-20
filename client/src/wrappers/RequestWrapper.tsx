@@ -39,7 +39,7 @@ export const RequestProvider = ({ children }: { children: React.ReactNode }) => 
     { id: uuidv4(), method: "GET", url: "", params: [], headers: [], body: "" }
   ]);
   
-  const [currentRequest, setCurrentRequest] = useState<Request>({
+  const [currentRequest, setCurrentRequest] = useState<Request >({
     id: uuidv4(),
     method: "GET",
     url: "",

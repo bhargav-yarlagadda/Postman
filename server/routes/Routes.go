@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"postman-backend/database"
@@ -13,18 +14,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
 func SendRequest(c *fiber.Ctx) error {
-	// reqData is Already a pointer
-	reqData := new(models.Request)
-
 	// Parse JSON request body
+	reqData := new(models.Request)
 	if err := c.BodyParser(reqData); err != nil {
+		fmt.Println("BodyParser Error:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request body"})
 	}
 
+	// Ensure method and URL are provided
+	if reqData.Method == "" || reqData.URL == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Method and URL are required"})
+	}
+
 	// Create HTTP request
-	req, err := http.NewRequest(reqData.Method, reqData.URL, bytes.NewBuffer([]byte(reqData.Body)))
+	reqBody := bytes.NewBufferString(reqData.Body)
+	req, err := http.NewRequest(reqData.Method, reqData.URL, reqBody)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create request"})
 	}
@@ -63,12 +68,15 @@ func SendRequest(c *fiber.Ctx) error {
 
 	// Format response as JSON
 	var jsonResponse map[string]interface{}
-	json.Unmarshal(responseBody, &jsonResponse)
+	err = json.Unmarshal(responseBody, &jsonResponse)
+	if err != nil {
+		jsonResponse = map[string]interface{}{"raw": string(responseBody)}
+	}
 
 	// Return API response to frontend
 	return c.Status(resp.StatusCode).JSON(fiber.Map{
 		"status":  resp.StatusCode,
 		"headers": resp.Header,
-		"body":    jsonResponse, // Parsed JSON response
+		"body":    jsonResponse,
 	})
 }
