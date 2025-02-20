@@ -5,6 +5,7 @@ import (
 
 	"postman-backend/auth"
 	"postman-backend/database"
+	"postman-backend/middleware"
 	"postman-backend/routes"
 
 	"github.com/gofiber/fiber/v2"
@@ -36,7 +37,7 @@ func main() {
 	}()
 
 	// Routes
-	app.Post("/", routes.SendRequest)
+	app.Post("/", middleware.AuthMiddleware,routes.SendRequest)
 	app.Post("/auth/sign-in", auth.SignIn)
 	app.Post("/auth/sign-up", auth.SignUp)
 	app.Get("/auth/get-session", auth.GetSession)

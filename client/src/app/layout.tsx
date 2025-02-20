@@ -4,6 +4,7 @@ import "./globals.css";
 
 import UserProvider from "@/wrappers/UserWrapper";
 import { RequestProvider } from "@/wrappers/RequestWrapper";
+import ResponseWrapper from "@/wrappers/ResponseWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
-          <RequestProvider>{children}</RequestProvider>
+          <RequestProvider>
+               <ResponseWrapper>
+                  {children}
+               </ResponseWrapper>
+            </RequestProvider>
         </UserProvider>
       </body>
     </html>
