@@ -23,7 +23,7 @@ const Page = () => {
   if (loading) return <Loader />;
 
   return (
-    <div>
+    <div className="pb-10 bg-[#1e1e1e] min-h-screen">
       <Navbar/>
       <AddTab/>
       <RequestSender/>
