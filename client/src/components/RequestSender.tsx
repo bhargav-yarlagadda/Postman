@@ -4,14 +4,21 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { Toast } from "./Toast";
 import { IParams, IHeader, Request } from "../../types";
+import { ResponseContext } from "@/wrappers/ResponseWrapper";
 
 const RequestSender: React.FC = () => {
   const context = useContext(RequestContext);
+  const responseContext = useContext(ResponseContext)
+  
   if (!context) {
     throw new Error("Error initializing request context");
   }
   const { currentRequest, setCurrentRequest, requests, setRequests } = context;
+  if(!responseContext){
+    throw new Error("Error initializing request context");
 
+  }
+  const {setResponse}=responseContext
   const [activeTab, setActiveTab] = useState<"params" | "headers" | "body">(
     "params"
   );
@@ -95,6 +102,9 @@ const RequestSender: React.FC = () => {
         setShowToast(true);
         return;
       }
+      try{
+
+      
       const response = await axios.post(
         "http://localhost:8080/",
         requestPayload,
@@ -102,10 +112,28 @@ const RequestSender: React.FC = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
+      setResponse({
+        statusCode: response.status.toString(),
+        statusMsg: response.statusText,
+        body: JSON.stringify(response.data), // Ensure body is a string
+        headers: Object.entries(response.headers).map(([key, value]) => ({ key, value })), // Convert headers to IHeader[]
+        cookies: response.config?.xsrfCookieName ?? "", // Ensure cookies is a string
+      });
+    }catch(errror:any){
+      setResponse({
+        statusCode: "500",
+        statusMsg: "Invalid URL",
+        body: "Could Not Resolve DNS for the URL",
+        headers: [], // Empty array for headers since no response is available
+        cookies: "", // No cookies in case of failure
+      });
+    }
 
-      console.log("Response:", response.data);
     } catch (error: any) {
+
+      
       console.error(
+        
         "Error:",
         error.response ? error.response.data : error.message
       );

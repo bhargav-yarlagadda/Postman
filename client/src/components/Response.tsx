@@ -1,19 +1,32 @@
-'use client'
+"use client";
 
-import React, { useState } from "react";
+import { ResponseContext } from "@/wrappers/ResponseWrapper";
+import React, { useContext, useState } from "react";
 
 const Response = () => {
   const [activeTab, setActiveTab] = useState<string>("Body");
+  const context = useContext(ResponseContext);
 
-  // Example response data
-  const responseData:{[key:string]:string} = {
-    Body: "Method Not Allowed",
-    Cookies: "No cookies available",
-    Headers: "Content-Type: application/json\nAllow: GET, HEAD",
+  if (!context) {
+    throw new Error("Response context not defined.");
+  }
+
+  const { response } = context;
+
+  const responseData: { [key: string]: string } = {
+    Body: response?.body || "No response body",
+    Cookies: response?.cookies || "No cookies available",
+    Headers: response?.headers?.length
+    ? response.headers.map((header) => `${header.key}: ${header.value}`).join("\n")
+    : "No headers available",
+
   };
 
   return (
-    <div className="w-full bg-[#1e1e1e] text-white h-[300px] overflow-y-scroll shadow-md " style={{scrollbarWidth:'none'}}>
+    <div
+      className="w-full bg-[#1e1e1e] text-white h-[300px] overflow-y-scroll shadow-md"
+      style={{ scrollbarWidth: "none" }}
+    >
       {/* Top Tabs & Status */}
       <div className="flex justify-between items-center px-4 py-2 border-b border-gray-700 text-gray-300 text-sm">
         <div className="flex space-x-4">
@@ -30,7 +43,7 @@ const Response = () => {
           ))}
         </div>
         <span className="bg-red-600 text-xs px-2 py-1 rounded-md">
-          405 Method Not Allowed
+          {response?.statusCode || 500} {response?.statusMsg || "Internal Server Erorr"}
         </span>
       </div>
 

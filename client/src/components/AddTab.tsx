@@ -47,6 +47,7 @@ const AddTab = () => {
   const deleteRequest = (id: string) => {
     setTabs((prevTabs) => prevTabs.filter((tab) => tab.id !== id));
     setRequests((prevRequests) => prevRequests.filter((request) => request.id !== id));
+    console.log(requests)
   };
 
   // Function to set the current request when a tab is clicked
