@@ -21,9 +21,9 @@ A full-stack post-man clone built using **Next.js** for the frontend and **Go Fi
 - 🍪 **User Sessions** – Manage user sessions securely using cookies for authentication.  
 - ✅ **Send HTTP Requests** – Support for GET, POST, PUT, DELETE, PATCH, etc.  
 - ✅ **Request Headers & Body** – Allow users to add custom headers, parameters, and body (JSON, form-data, raw, etc.).  
-- ✅ **Response Viewer** – Display response status, headers, and body in JSON, XML, or plain text format.  
+- ✅ **Response Viewer** – Display response status, headers, and body in JSON, XML, or plain text format.
+- ✅ **Save Request To History** – Save Frequently used Requests to history for future reference
 - ✅ **Preview Page** – Shows preview page if server sends html. 
-
 - ✅ **Error Handling** – Show detailed error messages for failed requests (e.g., timeouts, bad requests). 
 
 
