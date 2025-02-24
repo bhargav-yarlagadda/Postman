@@ -5,6 +5,9 @@ import (
 
 	"postman-backend/auth"
 	"postman-backend/database"
+	"postman-backend/history"
+	"postman-backend/middleware"
+
 	// "postman-backend/middleware"
 	"postman-backend/routes"
 
@@ -37,13 +40,16 @@ func main() {
 	}()
 
 	// Routes
-	// app.Post("/", middleware.AuthMiddleware,routes.SendRequest)
-	app.Post("/",routes.SendRequest)
+	app.Post("/", middleware.AuthMiddleware,routes.SendRequest)
+	// app.Post("/",routes.SendRequest)
 
 	app.Post("/auth/sign-in", auth.SignIn)
 	app.Post("/auth/sign-up", auth.SignUp)
 	app.Get("/auth/get-session", auth.GetSession)
 	app.Post("/auth/logout", auth.Logout)
+	app.Get("/history",middleware.AuthMiddleware,history.GetHistory)
+	app.Post("/history/save",middleware.AuthMiddleware,history.SaveToHistory)
+
 
 
 	// Start the server
