@@ -48,7 +48,9 @@ func main() {
 	app.Get("/auth/get-session", auth.GetSession)
 	app.Post("/auth/logout", auth.Logout)
 	app.Get("/history",middleware.AuthMiddleware,history.GetHistory)
-	app.Post("/history/save",middleware.AuthMiddleware,history.SaveToHistory)
+	app.Post("/history/save",middleware.AuthMiddleware,history.SaveToHistory) 
+	// app.Post("/history/save",history.SaveToHistory) 
+
 
 
 

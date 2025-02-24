@@ -81,7 +81,6 @@ const RequestSender: React.FC = () => {
       setHeaders([...headers, { key: "", value: "", description: "" }]);
     }
   };
-
   const sendRequest = async () => {
     try {
       const formattedHeaders = currentRequest.headers.reduce<
@@ -90,56 +89,50 @@ const RequestSender: React.FC = () => {
         acc[header.key] = header.value;
         return acc;
       }, {});
-
+  
       const requestPayload = {
         method: currentRequest.method,
         url: currentRequest.url,
         headers: formattedHeaders, // Ensure it's an object, not an array
         body: currentRequest.body || "",
       };
-
+  
       if (!requestPayload.url || !requestPayload.method) {
         setShowToast(true);
         return;
       }
-      try{
-
-      
-      const response = await axios.post(
-        "http://localhost:8080/",
-        requestPayload,
-        {
+  
+      try {
+        const response = await axios.post("http://localhost:8080/", requestPayload, {
           headers: { "Content-Type": "application/json" },
-        }
-      );
-      setResponse({
-        statusCode: response.status.toString(),
-        statusMsg: response.statusText,
-        body: JSON.stringify(response.data), // Ensure body is a string
-        headers: Object.entries(response.headers).map(([key, value]) => ({ key, value })), // Convert headers to IHeader[]
-        cookies: response.config?.xsrfCookieName ?? "", // Ensure cookies is a string
-      });
-    }catch(errror:any){
-      setResponse({
-        statusCode: "500",
-        statusMsg: "Invalid URL",
-        body: "Could Not Resolve DNS for the URL",
-        headers: [], // Empty array for headers since no response is available
-        cookies: "", // No cookies in case of failure
-      });
-    }
-
+          withCredentials: true, // Ensures cookies are included in the request
+        });
+  
+        setResponse({
+          statusCode: response.status.toString(),
+          statusMsg: response.statusText,
+          body: JSON.stringify(response.data), // Ensure body is a string
+          headers: Object.entries(response.headers).map(([key, value]) => ({ key, value })), // Convert headers to IHeader[]
+          cookies: response.config?.xsrfCookieName ?? "", // Ensure cookies is a string
+        });
+      } catch (error: any) {
+        console.error(
+          "Error:",
+          error.response ? error.response.data : error.message
+        );
+        setResponse({
+          statusCode: "500",
+          statusMsg: "Invalid URL",
+          body: "Could Not Resolve DNS for the URL",
+          headers: [], // Empty array for headers since no response is available
+          cookies: "", // No cookies in case of failure
+        });
+      }
     } catch (error: any) {
-
-      
-      console.error(
-        
-        "Error:",
-        error.response ? error.response.data : error.message
-      );
+      console.error("Error:", error.response ? error.response.data : error.message);
     }
   };
-
+  
   const onSave = () => {
     const updatedRequest: Request = {
       id: currentRequest.id, // Ensure the ID is preserved

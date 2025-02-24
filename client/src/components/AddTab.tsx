@@ -7,6 +7,8 @@ import { MdClose } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
 import { RequestContext } from "@/wrappers/RequestWrapper";
 import { Request } from "@/wrappers/RequestWrapper";
+import { saveToHistory } from "../../utils";
+import { Loader } from "./Loader";
 
 interface TabType {
   id: string; // UUID
@@ -16,7 +18,7 @@ interface TabType {
 const AddTab = () => {
   const [tabs, setTabs] = useState<TabType[]>([{ id: uuidv4(), name: "Request 1" }]);
   const requestContext = useContext(RequestContext);
-
+  const [loading,setLoading] = useState(false)
   if (!requestContext) {
     throw new Error("AddTab must be used within a RequestProvider");
   }
@@ -57,18 +59,26 @@ const AddTab = () => {
   };
 
   // Function to save the request
-  const saveRequest = () => {
-    console.log("Saved Requests:", requests);
+  const saveRequest = async () => {
+    if(!currentRequest){
+      return 
+    }
+    setLoading(true)
+    const response = await saveToHistory(currentRequest)
+    setLoading(false)
   };
 
   return (
     <div className="flex items-center w-full bg-[#1e1e1e] py-2 px-4">
+      {
+        loading && <Loader/>
+      }
       {/* Scrollable Tabs */}
       <div className="flex-1 overflow-x-auto flex items-center space-x-3 scrollbar-hide">
         {tabs.map((tab) => (
           <div
             key={tab.id}
-            className={`relative flex items-center bg-[#2D4263] text-white px-4 py-2 rounded-t-lg rounded-b-sm shadow-md transition-all`}
+            className={`relative flex items-center bg-[#2D4263] text-white px-4 py-2 rounded-t-md rounded-b-sm shadow-md transition-all`}
           >
             {/* Tab Name */}
             <button
@@ -107,9 +117,9 @@ const AddTab = () => {
         {/* Save Button */}
         <button
           onClick={saveRequest}
-          className="flex items-center bg-[#2D4263] px-4 py-2 rounded-lg text-white text-sm font-medium hover:bg-[#1a2e50] shadow-md transition-all"
+          className="flex items-center bg-[#2D4263] px-4 py-2 gap-2 rounded-lg text-white text-sm font-medium hover:bg-[#1a2e50] shadow-md transition-all"
         >
-          Save <FaRegSave  />
+          Save To History  <FaRegSave  />
         </button>
       </div>
     </div>
